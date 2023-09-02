@@ -1,3 +1,4 @@
+from enum import Enum
 import io
 import json
 import plotly.express as px
@@ -5,6 +6,34 @@ import pandas as pd
 from PIL import Image
 from pathlib import Path
 from bayes_models import Frame, Game, Position, Team
+
+
+class Action(Enum):
+    KILLED_WARD = 'KILLED_WARD'
+    UPDATE = 'UPDATE'
+    UNDO_ITEM = 'UNDO_ITEM'
+    KILLED_ANCIENT = 'KILLED_ANCIENT'  # TODO: Verify what ancient means
+    CONSUMED_ITEM = 'CONSUMED_ITEM'
+    PLACED_WARD = 'PLACED_WARD'
+    EXPIRED_OBJECTIVE = 'EXPIRED_OBJECTIVE'  # TODO: Verify what this means (herald not used ? Baron buff finished ?)
+    SOLD_ITEM = 'SOLD_ITEM'
+    START_MAP = 'START_MAP'
+    KILL = 'KILL'
+    SPAWNED_ANCIENT = 'SPAWNED_ANCIENT'  # TODO: Verify what ancient means
+    SELECTED_HERO = 'SELECTED_HERO'
+    TOOK_OBJECTIVE = 'TOOK_OBJECTIVE'  # TODO: Verify what objective means (turret, inib, drake, baron, herald ?)
+    SPECIAL_KILL = 'SPECIAL_KILL'  # TODO: Check what special stands for
+    BANNED_HERO = 'BANNED_HERO'
+    END_PAUSE = 'END_PAUSE'
+    PURCHASED_ITEM = 'PURCHASED_ITEM'
+    UPDATE_SCORE = 'UPDATE_SCORE'  # TODO: Verify what this is
+    DIED = 'DIED'
+    PICKED_UP_ITEM = 'PICKED_UP_ITEM'
+    ANNOUNCE = 'ANNOUNCE'
+    SPAWNED = 'SPAWNED'
+    UPDATE_POSITIONS = 'UPDATE_POSITIONS'
+    LEVEL_UP = 'LEVEL_UP'
+    ANNOUNCED_ANCIENT = 'ANNOUNCED_ANCIENT'  # TODO: Verify what ancient means
 
 
 class BayesParser:
@@ -18,7 +47,7 @@ class BayesParser:
     
     def init_game(self) -> Game:
         # Retreive game announce
-        game_announce = [d["payload"] for d in self.data if d["payload"]["payload"]["action"] == "ANNOUNCE"]
+        game_announce = [d["payload"] for d in self.data if d["payload"]["payload"]["action"] == Action.ANNOUNCE.value]
         assert len(game_announce) > 0, "Could not find game announce in the loaded data."
         game_announce = game_announce[0]
         
@@ -37,7 +66,7 @@ class BayesParser:
         return game
     
     def parse_positions(self) -> None:
-        position_data = [d["payload"]["payload"]["payload"] for d in self.data if d["payload"]["payload"]["action"] == "UPDATE_POSITIONS"]
+        position_data = [d["payload"]["payload"]["payload"] for d in self.data if d["payload"]["payload"]["action"] == Action.UPDATE_POSITIONS.value]
         
         for frame in position_data:
             for p in frame["positions"]:
@@ -48,6 +77,10 @@ class BayesParser:
                         position=Position(x=p["position"][0], y=p["position"][1])
                     )
                 )
+    
+    def get_teams_stats(self) -> None:
+        a = [d["payload"]["payload"]["payload"] for d in self.data if d["payload"]["payload"]["action"] == Action.UPDATE.value]
+        breakpoint()
 
     def position_map(self, gif_path: Path = None) -> None:    
         d = {
