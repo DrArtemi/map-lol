@@ -79,7 +79,13 @@ class BayesParser:
                 )
     
     def get_teams_stats(self) -> None:
-        a = [d["payload"]["payload"]["payload"] for d in self.data if d["payload"]["payload"]["action"] == Action.UPDATE.value]
+        # Score updates are logged every 5 seconds
+        a = [
+            d["payload"]["payload"]["payload"]
+            for d in self.data
+            if d["payload"]["payload"]["action"] == Action.UPDATE.value and
+            "gameTime" in d["payload"]["payload"]["payload"]  # Could do this with other field, maybe gameState set to POST_CHAMP_SELECT
+        ]
         breakpoint()
 
     def position_map(self, gif_path: Path = None) -> None:    
