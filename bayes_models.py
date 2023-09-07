@@ -1,5 +1,5 @@
 from typing import Literal
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class Position(BaseModel):
@@ -16,9 +16,9 @@ class ItemFrame(BaseModel):
 
 class StatsFrame(BaseModel):
     minions_killed: int = Field(alias="minionsKilled")
-    neutral_minions_killed: int = Field(alias="neutralMinionsKilled")
-    neutral_minions_killed_your_jungle: int = Field(alias="neutralMinionsKilledYourJungle")
-    neutral_minions_killed_enemy_jungle: int = Field(alias="neutralMinionsKilledEnemyJungle")
+    neutral_minions_killed: float = Field(alias="neutralMinionsKilled")
+    neutral_minions_killed_your_jungle: float = Field(alias="neutralMinionsKilledYourJungle")
+    neutral_minions_killed_enemy_jungle: float = Field(alias="neutralMinionsKilledEnemyJungle")
     champions_killed: int = Field(alias="championsKilled")
     num_deaths: int = Field(alias="numDeaths")
     assists: int
@@ -26,14 +26,14 @@ class StatsFrame(BaseModel):
     ward_placed: int = Field(alias="wardPlaced")
     ward_killed: int = Field(alias="wardKilled")
     vision_score: float = Field(alias="visionScore")
-    total_damage_delt: float = Field(alias="totalDamageDelt")
-    physical_damage_delt_player: float = Field(alias="physicalDamageDeltPlayer")
-    magic_damage_delt_player: float = Field(alias="magicDamageDeltPlayer")
-    true_damage_delt_player: float = Field(alias="truDamageDeltPlayer")
-    total_damage_delt_champions: float = Field(alias="totalDamageDeltChampions")
-    physical_damage_delt_champions: float = Field(alias="physicalDamageDeltChampions")
-    magic_damage_delt_champions: float = Field(alias="magicDamageDeltChampions")
-    true_damage_delt_champions: float = Field(alias="trueDamageDeltChampions")
+    total_damage_dealt: float = Field(alias="totalDamageDealt")
+    physical_damage_dealt_player: float = Field(alias="physicalDamageDealtPlayer")
+    magic_damage_dealt_player: float = Field(alias="magicDamageDealtPlayer")
+    true_damage_dealt_player: float = Field(alias="trueDamageDealtPlayer")
+    total_damage_dealt_champions: float = Field(alias="totalDamageDealtChampions")
+    physical_damage_dealt_champions: float = Field(alias="physicalDamageDealtChampions")
+    magic_damage_dealt_champions: float = Field(alias="magicDamageDealtChampions")
+    true_damage_dealt_champions: float = Field(alias="trueDamageDealtChampions")
     total_damage_taken: float = Field(alias="totalDamageTaken")
     physical_damage_taken: float = Field(alias="physicalDamageTaken")
     magic_damage_taken: float = Field(alias="magicDamageTaken")
@@ -56,43 +56,48 @@ class SpellFrame(BaseModel):
 class PlayerFrame(BaseModel):
     urn: str = Field(alias="liveDataPlayerUrn")
     position: Position | None = None
-    keystone_id: int = Field(alias="keystoneID")
-    champion_id: int = Field(alias="championID")
-    level: int
-    experience: int
-    attack_damage: int = Field(alias="attackDamage")
-    attack_speed: int = Field(alias="attackSpeed")
-    alive: bool
-    respawn_timer: int = Field(alias="respawnTimer")
-    health: int
-    health_max: int = Field(alias="healthMax")
-    health_regen: int = Field(alias="healthRegen")
-    magic_resist: int = Field(alias="magicResist")
-    magic_penetration: int = Field(alias="magicPenetration")
-    magic_penetration_percent: int = Field(alias="magicPenetrationPercent")
-    magic_penetration_percent_bonus: int = Field(alias="magicPenetrationPercentBonus")
-    armor: int
-    armor_penetration: int = Field(alias="armorPenetration")
-    armor_penetration_percent: int = Field(alias="armorPenetrationPercent")
-    armor_penetration_percent_bonus: int = Field(alias="armorPenetrationPercentBonus")
-    ability_power: int = Field(alias="abilityPower")
-    primary_ability_resource: int = Field(alias="primaryAbilityResource")
-    primary_ability_resource_regen: int = Field(alias="primaryAbilityResourceRegen")
-    primary_ability_resource_max: int = Field(alias="primaryAbilityResourceMax")
-    current_gold: int = Field(alias="currentGold")
-    total_gold: int = Field(alias="totalGold")
-    gold_per_second: int = Field(alias="goldPerSecond")
-    cc_reduction: int = Field(alias="ccReduction")
-    cooldown_reduction: int = Field(alias="cooldownReduction")
-    life_steal: int = Field(alias="lifeSteal")
-    spell_vamp: int = Field(alias="spellVamp")
-    items: list[ItemFrame]
-    items_undo: list[dict] = Field(alias="itemsUndo")  # TODO : SHOULD DETAIL FRAME ITEM INFO
-    items_sold: list[dict] = Field(alias="itemsSold")  # TODO : SHOULD DETAIL FRAME ITEM INFO
-    stats: StatsFrame
-    spell1: SpellFrame
-    spell2: SpellFrame
-    ultimate: SpellFrame
+    keystone_id: int | None = Field(default=None, alias="keystoneID")
+    champion_id: int | None = Field(default=None, alias="championID")
+    level: int | None = None
+    experience: int | None = None
+    attack_damage: int | None = Field(default=None, alias="attackDamage")
+    attack_speed: int | None = Field(default=None, alias="attackSpeed")
+    alive: bool | None = None
+    respawn_timer: float | None = Field(default=None, alias="respawnTimer")
+    health: int | None = None
+    health_max: int | None = Field(default=None, alias="healthMax")
+    health_regen: int | None = Field(default=None, alias="healthRegen")
+    magic_resist: int | None = Field(default=None, alias="magicResist")
+    magic_penetration: int | None = Field(default=None, alias="magicPenetration")
+    magic_penetration_percent: int | None = Field(default=None, alias="magicPenetrationPercent")
+    magic_penetration_percent_bonus: int | None = Field(default=None, alias="magicPenetrationPercentBonus")
+    armor: int | None = None
+    armor_penetration: int | None = Field(default=None, alias="armorPenetration")
+    armor_penetration_percent: int | None = Field(default=None, alias="armorPenetrationPercent")
+    armor_penetration_percent_bonus: int | None = Field(default=None, alias="armorPenetrationPercentBonus")
+    ability_power: int | None = Field(default=None, alias="abilityPower")
+    primary_ability_resource: int | None = Field(default=None, alias="primaryAbilityResource")
+    primary_ability_resource_regen: int | None = Field(default=None, alias="primaryAbilityResourceRegen")
+    primary_ability_resource_max: int | None = Field(default=None, alias="primaryAbilityResourceMax")
+    current_gold: int | None = Field(default=None, alias="currentGold")
+    total_gold: int | None = Field(default=None, alias="totalGold")
+    gold_per_second: int | None = Field(default=None, alias="goldPerSecond")
+    cc_reduction: int | None = Field(default=None, alias="ccReduction")
+    cooldown_reduction: int | None = Field(default=None, alias="cooldownReduction")
+    life_steal: int | None = Field(default=None, alias="lifeSteal")
+    spell_vamp: int | None = Field(default=None, alias="spellVamp")
+    items: list[ItemFrame] | None = None
+    items_undo: list[dict] | None = Field(default=None, alias="itemsUndo")  # TODO : SHOULD DETAIL FRAME ITEM INFO
+    items_sold: list[dict] | None = Field(default=None, alias="itemsSold")  # TODO : SHOULD DETAIL FRAME ITEM INFO
+    stats: StatsFrame | None = None
+    spell1: SpellFrame | None = None
+    spell2: SpellFrame | None = None
+    ultimate: SpellFrame | None = None
+
+    # Allows population by classic name    
+    model_config = ConfigDict(
+        populate_by_name=True,
+    )
 
 
 class TeamFrame(BaseModel):
@@ -108,12 +113,10 @@ class TeamFrame(BaseModel):
     killed_dragon_types: list[Literal["fire", "ocean", "earth", "air"]] = Field(alias="killedDragonTypes")  # TODO : Add other dragon types
 
 
-
 class Frame(BaseModel):
     game_time: int
-    
-    players: list[PlayerFrame] | None = None
-    teams: list[TeamFrame] | None = None    
+    players: list[PlayerFrame] = list()
+    teams: list[TeamFrame] = list()
     
 
 class Player(BaseModel):
