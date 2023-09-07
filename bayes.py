@@ -17,4 +17,4 @@ if __name__ == "__main__":
         raise FileNotFoundError(f"{path}")
     
     bp = BayesParser(path)
-    bp.position_map()
+    print(bp.get_teams_stats())
