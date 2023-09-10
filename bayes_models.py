@@ -110,7 +110,7 @@ class TeamFrame(BaseModel):
     inhib_kills: int = Field(alias="inhibKills")
     total_gold: int = Field(alias="totalGold")
     tower_kills: int = Field(alias="towerKills")
-    killed_dragon_types: list[Literal["fire", "ocean", "earth", "air"]] = Field(alias="killedDragonTypes")  # TODO : Add other dragon types
+    killed_dragon_types: list[Literal["fire", "water", "earth", "air"]] = Field(alias="killedDragonTypes")  # TODO : Add other dragon types
 
 
 class Frame(BaseModel):

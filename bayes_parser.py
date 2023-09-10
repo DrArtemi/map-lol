@@ -49,9 +49,9 @@ class BayesParser:
     def __init__(self, directory: Path) -> None:
         files = {f.name: f for f in directory.iterdir() if f.is_file()}
         
-        self.data = [json.load(open(files[f"{i}.json"], "r")) for i in range(1, len(files) - 1)]
+        self.data = [json.load(open(files[f"{i}".zfill(6) + ".json"], "r")) for i in range(1, len(files) - 1)]
         self.game = self.init_game()
-        
+
         # Init frames with the positions (every 1sec)
         self.parse_positions()
         # Parse stats and complete frames
@@ -121,7 +121,7 @@ class BayesParser:
                     assert len(player_update_idx) == 1, f"Could not find a player matching urn {player['liveDataPlayerUrn']}"
                     player_update_idx = player_update_idx[0]
                     del player["position"]  # Delete position as it is already set
-                    frame_update.players[player_update_idx] = PlayerFrame(**player)    
+                    frame_update.players[player_update_idx] = PlayerFrame(**player)
 
     def get_teams_stats(self) -> dict:
         """Gather some team statistics
@@ -181,12 +181,13 @@ class BayesParser:
             gif_path (Path, optional): Path where a GIF of the animation should be saved.
             If None, no GIF is saved. Defaults to None.
         """
+        player_info = {p.urn: {"team": t.urn, "name": p.summoner_name} for t in self.game.teams for p in t.players}
         d = {
-            "game_time": [f.game_time for t in self.game.teams for p in t.players for f in p.frames],
-            "x": [f.position.x for t in self.game.teams for p in t.players for f in p.frames],
-            "y": [f.position.y for t in self.game.teams for p in t.players for f in p.frames],
-            "player": [p.summoner_name for t in self.game.teams for p in t.players for _ in p.frames],
-            "team": [t.urn for t in self.game.teams for p in t.players for _ in p.frames],
+            "game_time": [f.game_time for f in self.game.frames for p in f.players if p.position is not None],
+            "x": [p.position.x for f in self.game.frames for p in f.players if p.position is not None],
+            "y": [p.position.y for f in self.game.frames for p in f.players if p.position is not None],
+            "player": [player_info[p.urn]["name"] for f in self.game.frames for p in f.players if p.position is not None],
+            "team": [player_info[p.urn]["team"] for f in self.game.frames for p in f.players if p.position is not None],
         }
         
         df = pd.DataFrame(data=d)
